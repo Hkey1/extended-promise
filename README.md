@@ -29,8 +29,10 @@ OR
 ```js
 const { 
 	ExtendedPromise, 
-	sleep, applyTimeout, 
-	isAbortError, TimeoutError,
+	sleep, SleepPromise,
+	applyTimeout, ApplyTimeoutPromise,	
+	TimeoutError, DontFinishError,
+	PseudoAbortError, isAbortError, 
 } = require('hkey-extended-promise'); 
 ```
 
