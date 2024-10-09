@@ -43,7 +43,7 @@ setTimeout(()=>promise.resolve(), 100);
 await promise;
 ```
 
-### sleep(ms)
+### sleep(ms, opts={})
 the code above is equivalent to `await sleep(100);` or `await (new SleepPromise(100))`
 
 ```
@@ -264,3 +264,78 @@ await new ExtendedPromise({
 	}
 });
 ```
+
+## Callbacks
+In opts you can specify callbacks
+
+### callback(resolve, reject)
+`new ExtendedPromise({callback: (resolve, reject)=>{...}})` or just `new ExtendedPromise((resolve, reject)=>{...})`
+
+Equal to defaut Promise callback. `new Promise((resolve, reject)=>{...})`
+
+### onInit(promise)
+`new ExtendedPromise({onInit: promise=>{...}})` 
+fires after promise creating
+
+### onFinish(promise, result, error),onResolve(promise, result), onReject(promise, error)
+* `new ExtendedPromise({onFinish: promise=>{...}})` 
+* fires before promise rejected or resolving
+* You can change result or cancel finishing (resolving/rejecting)
+* If you change result this callbacks can fires twice or more times
+
+### afterFinish(promise, result, error), afterResolve(promise, result), afterReject(promise, error)
+* `new ExtendedPromise({afterFinish: promise=>{...}})` 
+* You can NOT change result or cancel finishing 
+* This callbacks only fires once
+* If you dont want to change results please use after... callbacks
+ 
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+		this._onFinish      = onFinish;
+		this._onReject      = onReject;
+		this._onResolve     = onResolve;
+		this._afterReject   = afterReject;
+		this._afterResolve  = afterResolve;
+		this._afterFinish   = afterFinish;
+	
+*/		
