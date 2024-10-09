@@ -1,6 +1,6 @@
-# async-queue
+# hkey-extended-promise
 
-Extended Promise with resolve(), reject(), abort() methods, timeout, and much more
+Node.js module. Extended Promise with resolve(), reject(), abort() methods, timeout, and much more
 
 * Simple to use
 * resolve(), reject() methods
@@ -165,7 +165,7 @@ new ExtendedPromise({onFinish: function(promise, result, error){
 ### abort()
 Extended promises have `promise.abort()` method. By defaut it equal to  `promise.reject(new PseudoAbortError())`
 
-Unfortunately there is no access to the AbortError in the Node.js. You need to check it using `isAbortError(error)` function;
+Unfortunately there is no access to the AbortError in the Node.js. You need to check using `isAbortError(error)` function;
 
 ```js
 const promise = new ExtendedPromise();
@@ -186,24 +186,15 @@ new ExtendedPromise({abort: ...});
 ```
 
 #### abort=false (defaut)
-
-`new ExtendedPromise({abort: false})` or `new ExtendedPromise({})` or `new ExtendedPromise()`
-
-`promise.abort()` equal to `promise.reject(new PseudoAbortError())`
+* `new ExtendedPromise({abort: false})` or `new ExtendedPromise({})` or `new ExtendedPromise()`
+* `promise.abort()` equal to `promise.reject(new PseudoAbortError())`
 	
 #### abort=true 
-
-```js
-const promise =  new ExtendedPromise({abort: true});
-```
-
-Properties promise.abortController and promise.abortSignal will be generated
-
-On `promise.abort()` or on timeout promise.abortController will be aborted	
-
-`promise.abort()` equal to `promise.abortController.abort()`
-
-On `promise.abortController.abort()` promise will throw AbortError (check with isAbortError())
+* `new ExtendedPromise({abort: true});`
+* Properties promise.abortController and promise.abortSignal will be generated
+* On `promise.abort()` or on timeout promise.abortController will be aborted	
+* `promise.abort()` equal to `promise.abortController.abort()`
+*  On `promise.abortController.abort()` promise will throw AbortError (check with isAbortError())
 
 #### abort=abortController
 ```js
@@ -211,11 +202,9 @@ const abortController = new AbortController();
 const promise = new ExtendedPromise({abort: abortController});
 ```
 
-On `promise.abort()` or on timeout abortController will be aborted	
-
-`promise.abort()` equal to `abortController.abort()`
-
-if you `abortController.abort()` promise will throw AbortError (check with isAbortError())
+* On `promise.abort()` or on timeout abortController will be aborted	
+* `promise.abort()` equal to `abortController.abort()`
+*  On `abortController.abort()` promise will throw AbortError (check with isAbortError())
  
 #### abort=abortSignal
 ```js
@@ -224,11 +213,9 @@ const abortSignal = abortController.signal;
 const promise = new ExtendedPromise({abort: abortSignal});
 ```
 
-On `promise.abort()` or on timeout promise just throw error but abortController will NOT be aborted	
-
-If abortSignal will be aborted (`abortController.abort()`) promise will be rejected
-
-`promise.abort()` equal to `promise.reject(new PseudoAbortError())`
+* On `promise.abort()` or on timeout promise just throw error but abortController will NOT be aborted	
+* If abortSignal will be aborted (`abortController.abort()`) promise will be rejected
+* `promise.abort()` equal to `promise.reject(new PseudoAbortError())`
 
 ### promise.ref(), promise.unref() and promise.isRef
 As Net.Socket, ExtendedPromise has ref() and unref() methods;
