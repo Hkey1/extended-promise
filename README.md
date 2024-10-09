@@ -212,6 +212,7 @@ const promise = new ExtendedPromise({abort: abortController});
 ```
 
 On `promise.abort()` or on timeout abortController will be aborted	
+
 `promise.abort()` equal to `abortController.abort()`
 
 if you `abortController.abort()` promise will throw AbortError (check with isAbortError())
@@ -224,11 +225,10 @@ const promise = new ExtendedPromise({abort: abortSignal});
 ```
 
 On `promise.abort()` or on timeout promise just throw error but abortController will NOT be aborted	
-on abortSignal abort throw error (check with isAbortError())
 
+If abortSignal will be aborted (`abortController.abort()`) promise will be rejected
 
 `promise.abort()` equal to `promise.reject(new PseudoAbortError())`
-but if abortSignal will be aborted then promise will be rejected  
 
 ### promise.ref(), promise.unref() and promise.isRef
 As Net.Socket, ExtendedPromise has ref() and unref() methods;
