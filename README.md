@@ -11,94 +11,101 @@ Extended Promise with resolve(), reject(), abort() methods, timeout, and much mo
 * onFinish Callback
 * sleep(ms), applyTimeout(promise, ms)
 
-## Usage
+## Instal
+```
+npm i hkey-extended-promise
+```
 
 ```js
-	const ExtendedPromise = require('hkey-extended-promise'); // or const {ExtendedPromise} = require(....)
-	const promise = new ExtendedPromise();
-	setTimeout(()=>promise.resolve(), 100);
-	await promise;
+	const ExtendedPromise = require('hkey-extended-promise'); 
 ```
+OR
+```js
+	const {ExtendedPromise} = require('hkey-extended-promise'); 
+```
+
+OR
+```js
+	const { ExtendedPromise, sleep, applyTimeout, isAbortError, TimeoutError } = require('hkey-extended-promise'); 
+```
+
+## Usage
+```js
+const promise = new ExtendedPromise();
+setTimeout(()=>promise.resolve(), 100);
+await promise;
+```
+
 Or just:
 ```js
-	const {sleep} = require('hkey-extended-promise'); 
-	await sleep(100);
+await sleep(100);
 ```
 
 ### applyTimeout(promise, ms, opts={})
-
 If the embedded promise does not complete within the specified time, it will throw TimeoutError
 ```js
-	const {applyTimeout, TimeoutError} = require('hkey-extended-promise'); 
-	try{
-		await applyTimeout(somePromise, 100);
-	} catch(e){
-		if(e instance of TimeoutError){
-			...
-		}
+try{
+	await applyTimeout(somePromise, 100);
+} catch(e){
+	if(e instance of TimeoutError){
+		...
 	}
+}
 ```
 
 ### abort()
-
-	Extended promises have abort() Method
-	```js
-		const {isAbortError, ExtendedPromise} = require('hkey-extended-promise');
-	
-		const promise = new ExtendedPromise();
-		setTimeout(()=>promise.abort(), 100); // or promise.reject(new PseudoAbortError())
+Extended promises have abort() Method
+```js
+const promise = new ExtendedPromise();
+setTimeout(()=>promise.abort(), 100); // or promise.reject(new PseudoAbortError())
 		
-		try{
-			await promise;	
-		} catch(e){
-			if(isAbortError(e)){
-				...
-			}
-		}
-	```
+try{
+	await promise;	
+} catch(e){
+	if(isAbortError(e)){
+		...
+	}
+}
+```
 ### timeout
-
-	```js
-		const promise = new ExtendedPromise({timeout: 100});
-	```
+```js
+	const promise = new ExtendedPromise({timeout: 100});
+```
 	OR
-	```js
-		const promise = new ExtendedPromise();
-		promise.timeout = 100; // OR promise.setTimeout(100);
-	```
-	clearTimeout
-	```js
-		const promise = new ExtendedPromise({timeout: 100});
-		promise.timeout = false; // OR promise.clearTimeout(); OR promise.timeout = Infinity;
-	```
+```js
+	const promise = new ExtendedPromise();
+	promise.timeout = 100; 
+	// OR promise.setTimeout(100);
+```
+#### clearTimeout
+```js
+	const promise = new ExtendedPromise({timeout: 100});
+	promise.timeout = false; 
+	// OR promise.clearTimeout();
+	// OR promise.timeout = Infinity;
+```
 
 #### get ms till timeout fires
+Just use promise.timeout
+```js
+	const promise = new ExtendedPromise({timeout: 100});
+	console.log(promise.timeout); // 100;
 
-    Just use promise.timeout
-	```js
-		const promise = new ExtendedPromise({timeout: 100});
-		console.log(promise.timeout); // 100;
-	```
+	await sleep(20);
+	console.log(promise.timeout); // 80;
 
-	```js
-		const promise = new ExtendedPromise({timeout: 100});
-		await sleep(10);
-		console.log(promise.timeout); // 90;
-	```
-	
-	if no timeout promise.timeout will be Infinity
-	```js
-		const promise = new ExtendedPromise();
-		console.log(promise.timeout); // Infinity;
-	```
+	//if no timeout promise.timeout will be Infinity
+	promise.timeout = false;
+	console.log(promise.timeout); // Infinity;
+```
 	
 #### timeout in sleep() and applyTimeout()
 You can use timeout on sleep() and applyTimeout() just as in ExtendedPromise 
 
-	```js
-		const promise = sleep(100); //or new SleepPromise(100)
-		promise.timeout = 1000; // OR promise.setTimeout(1000);
-	```
+```js
+const promise = sleep(100); //or new SleepPromise(100)
+promise.timeout = 1000; // OR promise.setTimeout(1000);
+```
 
 ### promise.isFinished, promise.result, promise.error
 
