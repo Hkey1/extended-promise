@@ -277,7 +277,7 @@ In opts you can specify callbacks
 * `new ExtendedPromise({onInit: promise=>{...}})` 
 *  fires after promise creating
 
-### onFinish(promise, result, error),onResolve(promise, result), onReject(promise, error)
+### onFinish(promise, result, error), onResolve(promise, result), onReject(promise, error)
 * `new ExtendedPromise({onFinish: promise=>{...}})` 
 * fires before promise rejected or resolving
 * You can change result or cancel finishing (resolving/rejecting)
@@ -288,54 +288,4 @@ In opts you can specify callbacks
 * You can NOT change result or cancel finishing 
 * This callbacks only fires once
 * If you dont want to change results please use after... callbacks
- 
 
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-		this._onFinish      = onFinish;
-		this._onReject      = onReject;
-		this._onResolve     = onResolve;
-		this._afterReject   = afterReject;
-		this._afterResolve  = afterResolve;
-		this._afterFinish   = afterFinish;
-	
-*/		
