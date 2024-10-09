@@ -43,16 +43,26 @@ setTimeout(()=>promise.resolve(), 100);
 await promise;
 ```
 
-Or just:
-```js
+### sleep(ms)
+the code above is equivalent to `await sleep(100);` or `await (new SleepPromise(100))`
+
+```
+const {..., sleep, SleepPromise, ... } = require('hkey-extended-promise');   
+...
 await sleep(100);
+...
 ```
 
-### applyTimeout(promise, ms, opts={})
-If the embedded promise does not complete within the specified time, it will throw TimeoutError
+
+### applyTimeout(innerPromise, ms, opts={})
+If the embedded promise (innerPromise) does not complete within the specified time, ApplyTimeoutPromise will throw TimeoutError
 ```js
+const {..., applyTimeout, ApplyTimeoutPromise, ... } = require('hkey-extended-promise');   
+...
+const innerPromise = ... // new Promise(...)
+...
 try{
-	await applyTimeout(somePromise, 100);
+	await applyTimeout(innerPromise, 100);
 } catch(e){
 	if(e instance of TimeoutError){
 		...
@@ -60,20 +70,6 @@ try{
 }
 ```
 
-### abort()
-Extended promises have abort() Method
-```js
-const promise = new ExtendedPromise();
-setTimeout(()=>promise.abort(), 100); // or promise.reject(new PseudoAbortError())
-		
-try{
-	await promise;	
-} catch(e){
-	if(isAbortError(e)){
-		...
-	}
-}
-```
 ### timeout
 ```js
 const promise = new ExtendedPromise({timeout: 100});
@@ -90,8 +86,10 @@ promise.timeout = 100;
 
 #### TimeoutError
 ```js
+const {..., TimeoutError, ... } = require('hkey-extended-promise');   
+...
 try{
-	await promise;
+	await new ExtendedPromise({...,  timeout: 1000});
 } catch (e){
 	if(e instance of TimeoutError){
 		...
@@ -109,8 +107,9 @@ OR
 promise.clearTimeout();
 ```
 
-#### get ms till timeout fires
-Just use promise.timeout
+#### Get ms till timeout fires
+Just use `promise.timeout`
+
 ```js
 const promise = new ExtendedPromise({timeout: 100});
 console.log(promise.timeout); // 100;
@@ -118,23 +117,31 @@ console.log(promise.timeout); // 100;
 await sleep(20);
 console.log(promise.timeout); // 80;
 
-//if no timeout promise.timeout will be Infinity
 promise.timeout = false;
 console.log(promise.timeout); // Infinity;
+
 ```
 	
 #### timeout in sleep() and applyTimeout()
-You can use timeout on sleep() and applyTimeout() just as in ExtendedPromise 
+You can use timeout on SleepPromise(`sleep()`) and ApplyTimeoutPromise(`applyTimeout()`) just as in ExtendedPromise 
 
 ```js
-const promise = sleep(100); //OR new SleepPromise(100)
+const promise = sleep(100); 
+console.log(promise.timeout); // 100;
+
 promise.timeout = 1000; // OR promise.setTimeout(1000);
+console.log(promise.timeout); // 1000;
 ```
+
+In SleepPromise(`sleep()`) timeout cases promise resolve. On other cases on timeout promise will be rejected (throw TimeoutError);
 
 ### promise.isFinished, promise.result, promise.error
 
 if promise.isFinished=true then promise is finised and promise.result or promise.error filled.
 ```js
+...
+const promise = new ExtendedPromise(...);
+...
 if(promise.isFinished){
 	if(promise.error){
 		console.log('promise finised with error', promise.error);
@@ -153,20 +160,36 @@ new ExtendedPromise({onFinish: function(promise, result, error){
 }})
 ```
 
-## Advances usage
+## Advances Usage
 
-### abort option
-You can use abortSignal or abortController or true or false
+### abort()
+Extended promises have `promise.abort()` method. By defaut it equal to  `promise.reject(new PseudoAbortError())`
+
+Unfortunately there is no access to the AbortError in the Node.js. You need to check it using `isAbortError(error)` function;
 
 ```js
-const promise = new ExtendedPromise({abort: ...});
+const promise = new ExtendedPromise();
+setTimeout(()=>promise.abort(), 100); 
+		
+try{
+	await promise;	
+} catch(error){
+	if(isAbortError(error)){
+		...
+	}
+}
 ```
-	
+You can use abortSignal or abortController or true or false as abort option
+
+```js
+new ExtendedPromise({abort: ...});
+```
+
 #### abort=false (defaut)
 
 `new ExtendedPromise({abort: false})` or `new ExtendedPromise({})` or `new ExtendedPromise()`
 
-promise.abort() equal to promise.reject(new PseudoAbortError())
+`promise.abort()` equal to `promise.reject(new PseudoAbortError())`
 	
 #### abort=true 
 
@@ -187,11 +210,11 @@ On `promise.abortController.abort()` promise will throw AbortError (check with i
 const abortController = new AbortController();
 const promise = new ExtendedPromise({abort: abortController});
 ```
+
 On `promise.abort()` or on timeout abortController will be aborted	
 `promise.abort()` equal to `abortController.abort()`
 
 if you `abortController.abort()` promise will throw AbortError (check with isAbortError())
-
  
 #### abort=abortSignal
 ```js
@@ -244,7 +267,7 @@ new ExtendedPromise({
 code below equal to `await sleep(100)`
 
 ```js
-new new ExtendedPromise({
+await new ExtendedPromise({
 	timeout: 100,
 	onFinish: function(promise, result, error){
 		if(error instanceof TimeoutError){
