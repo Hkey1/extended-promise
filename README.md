@@ -165,7 +165,7 @@ new ExtendedPromise({afterFinish: function(promise, result, error){
 ### abort()
 * Extended promises have `promise.abort()` method. 
 * By defaut it equal to  `promise.reject(new PseudoAbortError())`
-* Better check using `isAbortError(error)` not (error instanceof PseudoAbortError);
+* Better check using `isAbortError(error)` and not use `error instanceof PseudoAbortError`;
 
 ```js
 const {..., isAbortError, ...} = require('hkey-extended-promise');
@@ -226,9 +226,14 @@ will not let the program exit before promise is finished
 will let the program exit before promise is finished
 	
 ### How to change promise result
+* You can change result in onFinish, in onResolve, or in onReject callbacks;
+* But NOT in afterFinish, in afterResolve, or in afterReject
+* You need to change promise.result and promise.error.
+* To reject you can throw error in this callback
+* To cancel finishing (resolving, rejecting) throw DontFinishError
 
 ```js
-const {DontFinishError,ExtendedPromise} = require('hkey-extended-promise'); 
+const {..., DontFinishError, ...} = require('hkey-extended-promise'); 
 
 new ExtendedPromise({
 	onFinish: function(promise, result, error){
