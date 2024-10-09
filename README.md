@@ -269,13 +269,13 @@ await new ExtendedPromise({
 In opts you can specify callbacks
 
 ### callback(resolve, reject)
-`new ExtendedPromise({callback: (resolve, reject)=>{...}})` or just `new ExtendedPromise((resolve, reject)=>{...})`
-
-Equal to defaut Promise callback. `new Promise((resolve, reject)=>{...})`
+* `new ExtendedPromise({callback: (resolve, reject)=>{...}})` 
+* `new ExtendedPromise((resolve, reject)=>{...})`
+* Equal to defaut Promise callback. `new Promise((resolve, reject)=>{...})`
 
 ### onInit(promise)
-`new ExtendedPromise({onInit: promise=>{...}})` 
-fires after promise creating
+* `new ExtendedPromise({onInit: promise=>{...}})` 
+*  fires after promise creating
 
 ### onFinish(promise, result, error),onResolve(promise, result), onReject(promise, error)
 * `new ExtendedPromise({onFinish: promise=>{...}})` 
