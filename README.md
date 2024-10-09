@@ -153,9 +153,9 @@ if(promise.isFinished){
 }
 ```
 
-### onFinish(promise, result, error)
+### afterFinish(promise, result, error)
 ```js
-new ExtendedPromise({onFinish: function(promise, result, error){
+new ExtendedPromise({afterFinish: function(promise, result, error){
 	...
 }})
 ```
@@ -179,11 +179,7 @@ try{
 	}
 }
 ```
-You can use abortSignal or abortController or true or false as abort option
-
-```js
-new ExtendedPromise({abort: ...});
-```
+You can use abortSignal or abortController or true or false as abort option `new ExtendedPromise({abort: ...});`
 
 #### abort=false (defaut)
 * `new ExtendedPromise({abort: false})` or `new ExtendedPromise({})` or `new ExtendedPromise()`
