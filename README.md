@@ -163,12 +163,14 @@ new ExtendedPromise({afterFinish: function(promise, result, error){
 ## Advances Usage
 
 ### abort()
-Extended promises have `promise.abort()` method. By defaut it equal to  `promise.reject(new PseudoAbortError())`
-
-Unfortunately there is no access to the AbortError in the Node.js. You need to check using `isAbortError(error)` function;
+* Extended promises have `promise.abort()` method. 
+* By defaut it equal to  `promise.reject(new PseudoAbortError())`
+* Better check using `isAbortError(error)` not (error instanceof PseudoAbortError);
 
 ```js
-const promise = new ExtendedPromise();
+const {..., isAbortError, ...} = require('hkey-extended-promise');
+...
+const promise = new ExtendedPromise(...);
 setTimeout(()=>promise.abort(), 100); 
 		
 try{
