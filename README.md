@@ -29,11 +29,11 @@ const {ExtendedPromise} = require('hkey-extended-promise');
 OR
 ```js
 const { 
-	ExtendedPromise, 
-	sleep, SleepPromise,
-	applyTimeout, ApplyTimeoutPromise,	
-	TimeoutError, DontFinishError,
-	PseudoAbortError, isAbortError, 
+    ExtendedPromise, 
+    sleep, SleepPromise,
+    applyTimeout, ApplyTimeoutPromise,    
+    TimeoutError, DontFinishError,
+    PseudoAbortError, isAbortError, 
 } = require('hkey-extended-promise'); 
 ```
 
@@ -85,11 +85,11 @@ promise.timeout = 100;
 ```js
 const {..., TimeoutError, ... } = require('hkey-extended-promise');   
 try{
-	await new ExtendedPromise({timeout: 100});
+    await new ExtendedPromise({timeout: 100});
 } catch(err){
-	if(err instance of TimeoutError){
-		...
-	}
+    if(err instance of TimeoutError){
+        ...
+    }
 }
 ```
 
@@ -117,7 +117,7 @@ promise.timeout = false;
 console.log(promise.timeout); // Infinity
 
 ```
-	
+    
 #### timeout in sleep() and applyTimeout()
 You can use promise.timeout on SleepPromise(`sleep()`) and ApplyTimeoutPromise(`applyTimeout()`) just as in ExtendedPromise 
 
@@ -139,20 +139,20 @@ if `promise.isFinished==true` then promise is finised and promise.result or prom
 const promise = new ExtendedPromise(...);
 ...
 if(promise.isFinished){
-	if(promise.error){
-		console.log('promise finised with error', promise.error);
-	} else {
-		console.log('promise resolved', promise.result);
-	}
+    if(promise.error){
+        console.log('promise finised with error', promise.error);
+    } else {
+        console.log('promise resolved', promise.result);
+    }
 } else {
-	console.log('promise is pending');
+    console.log('promise is pending');
 }
 ```
 
 ### afterFinish(promise, result, error)
 ```js
 new ExtendedPromise({afterFinish: function(promise, result, error){
-	...
+    ...
 }})
 ```
 
@@ -168,13 +168,13 @@ const {..., isAbortError, ...} = require('hkey-extended-promise');
 ...
 const promise = new ExtendedPromise(...);
 setTimeout(()=>promise.abort(), 100); 
-		
+        
 try{
-	await promise;	
+    await promise;    
 } catch(error){
-	if(isAbortError(error)){
-		...
-	}
+    if(isAbortError(error)){
+        ...
+    }
 }
 ```
 You can use abortSignal or abortController or true or false as abort option `new ExtendedPromise({abort: ...});`
@@ -183,13 +183,13 @@ You can use abortSignal or abortController or true or false as abort option `new
 * `new ExtendedPromise({abort: false})` 
     - or `new ExtendedPromise({})` 
     - or `new ExtendedPromise()`
-* default	
+* default    
 * `promise.abort()` equal to `promise.reject(new PseudoAbortError())`
-	
+    
 #### abort=true 
 * `new ExtendedPromise({abort: true});`
 * Properties promise.abortController and promise.abortSignal will be generated
-* On `promise.abort()` or on timeout promise.abortController will be aborted	
+* On `promise.abort()` or on timeout promise.abortController will be aborted    
 * `promise.abort()` equal to `promise.abortController.abort()`
 *  On `promise.abortController.abort()` promise will throw AbortError (check with isAbortError())
 
@@ -199,7 +199,7 @@ const abortController = new AbortController();
 const promise = new ExtendedPromise({abort: abortController});
 ```
 
-* On `promise.abort()` or on timeout abortController will be aborted	
+* On `promise.abort()` or on timeout abortController will be aborted    
 * `promise.abort()` equal to `abortController.abort()`
 *  On `abortController.abort()` promise will throw AbortError (check with isAbortError())
  
@@ -210,7 +210,7 @@ const abortSignal = abortController.signal;
 const promise = new ExtendedPromise({abort: abortSignal});
 ```
 
-* On `promise.abort()` or on timeout promise just throw error but abortController will NOT be aborted	
+* On `promise.abort()` or on timeout promise just throw error but abortController will NOT be aborted    
 * If abortSignal will be aborted (`abortController.abort()`) promise will be rejected
 * `promise.abort()` equal to `promise.reject(new PseudoAbortError())`
 
@@ -218,14 +218,14 @@ const promise = new ExtendedPromise({abort: abortSignal});
 * As Net.Socket, ExtendedPromise has ref() and unref() methods;
 * to DONT let the program exit before promise is finished
     - `promise.ref()`
-	- or `promise.isRef = true`
-	- or `new ExtendedPromise({ref: true})`
+    - or `promise.isRef = true`
+    - or `new ExtendedPromise({ref: true})`
 * to let the program exit before promise is finished
     - `promise.unref()`
-	- or `promise.isRef = false`
-	- or `new ExtendedPromise({ref: false})`
-	- or by default `new ExtendedPromise()`
-	
+    - or `promise.isRef = false`
+    - or `new ExtendedPromise({ref: false})`
+    - or by default `new ExtendedPromise()`
+    
 ### How to change promise result
 * You can change result in onFinish, in onResolve, or in onReject callbacks;
 * But NOT in afterFinish, in afterResolve, or in afterReject
@@ -237,20 +237,20 @@ const promise = new ExtendedPromise({abort: abortSignal});
 const {..., DontFinishError, ...} = require('hkey-extended-promise'); 
 
 new ExtendedPromise({
-	onFinish: function(promise, result, error){
-		if(...){ //resolve 
-			promise.result = 123;
-			promise.error  = undefined;
-		} 
-		if(...){ //reject
-			promise.result = undefined;
-			promise.error  = new Error(...);
-			//OR just throw new Error(...);
-		} 
-		if(...){ //dont finish (continue pending)
-			throw new DontFinishError();
-		}
-	}
+    onFinish: function(promise, result, error){
+        if(...){ //resolve 
+            promise.result = 123;
+            promise.error  = undefined;
+        } 
+        if(...){ //reject
+            promise.result = undefined;
+            promise.error  = new Error(...);
+            //OR just throw new Error(...);
+        } 
+        if(...){ //dont finish (continue pending)
+            throw new DontFinishError();
+        }
+    }
 });
 ```
 
@@ -259,13 +259,13 @@ code below equal to `await sleep(100)`
 
 ```js
 await new ExtendedPromise({
-	timeout: 100,
-	onFinish: function(promise, result, error){
-		if(error instanceof TimeoutError){
-			promise.result = true;
-			promise.error  = undefined;
-		} 
-	}
+    timeout: 100,
+    onFinish: function(promise, result, error){
+        if(error instanceof TimeoutError){
+            promise.result = true;
+            promise.error  = undefined;
+        } 
+    }
 });
 ```
 
