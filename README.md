@@ -74,406 +74,181 @@ try{
 ```
 ### timeout
 ```js
-	const promise = new ExtendedPromise({timeout: 100});
+const promise = new ExtendedPromise({timeout: 100});
 ```
-	OR
+
+OR
+
 ```js
-	const promise = new ExtendedPromise();
-	promise.timeout = 100; 
-	// OR promise.setTimeout(100);
+const promise = new ExtendedPromise();
+promise.timeout = 100; 
+// OR promise.setTimeout(100);
 ```
+
+
+#### TimeoutError
+```js
+try{
+	await promise;
+} catch (e){
+	if(e instance of TimeoutError){
+		...
+	}
+}
+```
+
 #### clearTimeout
 ```js
-	const promise = new ExtendedPromise({timeout: 100});
-	promise.timeout = false; 
-	// OR promise.clearTimeout();
-	// OR promise.timeout = Infinity;
+promise.timeout = false; 
+```
+
+OR
+```js
+promise.clearTimeout();
 ```
 
 #### get ms till timeout fires
 Just use promise.timeout
 ```js
-	const promise = new ExtendedPromise({timeout: 100});
-	console.log(promise.timeout); // 100;
+const promise = new ExtendedPromise({timeout: 100});
+console.log(promise.timeout); // 100;
 
-	await sleep(20);
-	console.log(promise.timeout); // 80;
+await sleep(20);
+console.log(promise.timeout); // 80;
 
-	//if no timeout promise.timeout will be Infinity
-	promise.timeout = false;
-	console.log(promise.timeout); // Infinity;
+//if no timeout promise.timeout will be Infinity
+promise.timeout = false;
+console.log(promise.timeout); // Infinity;
 ```
 	
 #### timeout in sleep() and applyTimeout()
 You can use timeout on sleep() and applyTimeout() just as in ExtendedPromise 
 
 ```js
-const promise = sleep(100); //or new SleepPromise(100)
+const promise = sleep(100); //OR new SleepPromise(100)
 promise.timeout = 1000; // OR promise.setTimeout(1000);
 ```
 
 ### promise.isFinished, promise.result, promise.error
 
 if promise.isFinished=true then promise is finised and promise.result or promise.error filled.
-	```js
-		if(promise.isFinished){
-			if(promise.error){
-				console.log('promise finised with error', promise.error);
-			} else {
-				console.log('promise resolved', promise.result);
-			}
-		} else {
-			console.log('promise is pending');
-		}
-	```
+```js
+if(promise.isFinished){
+	if(promise.error){
+		console.log('promise finised with error', promise.error);
+	} else {
+		console.log('promise resolved', promise.result);
+	}
+} else {
+	console.log('promise is pending');
+}
+```
 
 ### onFinish(promise, result, error)
-
-	```js
-		new Promise({onFinish: function(promise, result, error){
-			...
-		}})
-	```
+```js
+new ExtendedPromise({onFinish: function(promise, result, error){
+	...
+}})
+```
 
 ## Advances usage
 
 ### abort option
+You can use abortSignal or abortController or true or false
 
-	you can use abortSignal or abortController or true or false
+```js
+const promise = new ExtendedPromise({abort: ...});
+```
 	
 #### abort=false (defaut)
 
-	```js
-		const promise = new ExtendedPromise({abort: false}) //or new ExtendedPromise();
-		try{
-			await promise;
-		} catch(e){
-			if(isAbortError(e)){
-				...
-			} else {
-				...
-			}
-		}
-	```	
-	promise.abort() do promise.reject(new PseudoAbortError())
+`new ExtendedPromise({abort: false})` or `new ExtendedPromise({})` or `new ExtendedPromise()`
+
+promise.abort() equal to promise.reject(new PseudoAbortError())
 	
 #### abort=true 
 
-	Generate promise.abortController and promise.abortSingnal properties;
-	promise.abort() do promise.abortController.abort();
-	On timeout or on abort abortController and abortSingnal will be aborted
-	
-	```js
-		const promise = new ExtendedPromise({abort: true});
-	```
-	
-#### abort=abortSignal
+```js
+const promise =  new ExtendedPromise({abort: true});
+```
 
- 	promise.abort() do promise.reject(new PseudoAbortError())
-	but if abortSignal will be aborted then promise will be rejected  
+Properties promise.abortController and promise.abortSignal will be generated
 
-	```js
-		const abortController = new AbortController();
-		const promise = new ExtendedPromise({abort: abortController.signal});
-	```
+On `promise.abort()` or on timeout promise.abortController will be aborted	
+
+`promise.abort()` equal to `promise.abortController.abort()`
+
+On `promise.abortController.abort()` promise will throw AbortError (check with isAbortError())
+
 #### abort=abortController
+```js
+const abortController = new AbortController();
+const promise = new ExtendedPromise({abort: abortController});
+```
+On `promise.abort()` or on timeout abortController will be aborted	
+`promise.abort()` equal to `abortController.abort()`
 
- 	promise.abort() do promise.reject(new PseudoAbortError())
-	but if abortController will be aborted then promise will be rejected
-	on promise.abort() or timeout abortController will be aborted	
+if you `abortController.abort()` promise will throw AbortError (check with isAbortError())
 
-	```js
-		const abortController = new AbortController();
-		const promise = new ExtendedPromise({abort: abortController});
-		...
-	```
-	
+ 
+#### abort=abortSignal
+```js
+const abortController = new AbortController();
+const abortSignal = abortController.signal;
+const promise = new ExtendedPromise({abort: abortSignal});
+```
+
+On `promise.abort()` or on timeout promise just throw error but abortController will NOT be aborted	
+on abortSignal abort throw error (check with isAbortError())
+
+
+`promise.abort()` equal to `promise.reject(new PseudoAbortError())`
+but if abortSignal will be aborted then promise will be rejected  
+
 ### promise.ref(), promise.unref() and promise.isRef
+As Net.Socket, ExtendedPromise has ref() and unref() methods;
 
-	As Net.Socket, ExtendedPromise has ref() and unref() methods;
-
-	'promise.ref()' or 'promise.isRef = true' or 'new ExtendedPromise({ref: true})' 
-	will not let the program exit before promise is finished
+`promise.ref()` or `promise.isRef = true` or `new ExtendedPromise({ref: true})` 
+will not let the program exit before promise is finished
 	
 	
-	'promise.unref()' or 'promise.isRef = false' or 'new ExtendedPromise({ref: false})' or by defaut 'new ExtendedPromise()' 
-	will let the program exit before promise is finished
-	
+`promise.unref()` or `promise.isRef = false` or `new ExtendedPromise({ref: false})` or by defaut `new ExtendedPromise()` 
+will let the program exit before promise is finished
 	
 ### How to change promise result
 
 ```js
-	new ExtendedPromise({
-		onFinish: function(promise, result, error){
-			if(...){
-				//resolve 
-				promise.result = 123;
-				promise.error  = undefined;
-			} 
-			if(...){
-				//reject
-				promise.result = undefined;
-				promise.error  = new Error(...);
-				//OR just throw new Error(...);
-			} 
-			if(...){
-				//promise will be continue pending (will not be resolved or rejected)
-				//const {DontFinishError} = require('hkey-extended-promise'); 
-				throw new DontFinishError();
-			}
+const {DontFinishError,ExtendedPromise} = require('hkey-extended-promise'); 
+
+new ExtendedPromise({
+	onFinish: function(promise, result, error){
+		if(...){ //resolve 
+			promise.result = 123;
+			promise.error  = undefined;
+		} 
+		if(...){ //reject
+			promise.result = undefined;
+			promise.error  = new Error(...);
+			//OR just throw new Error(...);
+		} 
+		if(...){ //dont finish (continue pending)
+			throw new DontFinishError();
 		}
-	});
-	```
+	}
+});
+```
 
 #### example 
+code below equal to `await sleep(100)`
 
 ```js
-	new ExtendedPromise({
-		timeout: 100,
-		onFinish: function(promise, result, error){
-			if(error instanceof TimeoutError){
-				promise.result = true;
-				promise.error  = undefined;
-			} 
-		}
-	});
-```
-	
-	this code do same as 'sleep(100)' 
-
-
-
-
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
-			if(this._finishExecOn('_onFinish', [result, error])) return;
-			if(this.error){
-				if(this._finishExecOn('_onReject', [error])) return;
-				if(!this.error){
-					if(this._finishExecOn('_onResolve', [result])) return;
-					assert(!this.error);
-				}
-				
-	
-	
-
-
-
-
-	
-	
- 
- 
-
-
-
-
-
-
-
-	
-	
-
-	
-	
-	
-	
-	
-
-
-
-	
-	
-	
-	
-	
-
-
-
-
-
-
-
-
-
-	
-	
-	
-
-
-		//OR 
-		//const {PseudoAbortError} = require('hkey-extended-promise');
-		// setTimeout(()=>);
-
-
-	
-	
-	
-
-
-	
-### abort=true
-
-	```js
-		const promise = new ExtendedPromise({abort: true});
-		setTimeout(()=>promise.abortController.abort(), 100);
-		promise.abortSignal.on('abort', ()=>{});
-		
-		try{
-			await promise;	
-		} catch(e){
-			if(isAbortError(e)){
-				...
-			}
-		}
-	```
-
-### abort=abortController	
-	on timeout or on abort abortController, abortSingnal will be aborted
-	
-	```js
-		let abortController = new AbortController();
-		const promise = new ExtendedPromise({abort: true});
-		
-		//assert(abortController        === promise.abortController);
-		//assert(abortController.signal === promise.abortController.signal);
-		//assert(abortController.signal === promise.abortSignal);
-		
-		setTimeout(()=>promise.abort(), 100);//abortController will be aborded
-	```
-
-### abort=abortSignal	
-	on timeout or on abort abortSingnal will NOT be aborted
-
-
-## timeout
-	```js
-		const promise = new ExtendedPromise({timeout: 100});
-	```	
-	OR
-	```js
-		const promise = new ExtendedPromise();
-		promise.timeout = 100;
-	```	
-	OR
-	```js
-		const promise = new ExtendedPromise();
-		promise.setTimeout(100);
-	```	
-	
-## clear timeout
-	To clear timeout set promise.timeout = false; Or promise.clearTimeout();
-	
-## get ms till timeout fires
-	```js
-		console.log(promise.timeout)
-	```	
-	if timeout is not set will be Infinity
-	
-
-
-	
-	
-
-
-	
-	
-	
-	
-
-
-
-
-
-
-
-
-
-
-## queue
-```js
-	const queue = new Queue({delay: 30}); // OR new Queue(30);
-```
-
-### queue.length (Remains items in query)
-```js
-	console.log(queue.length);
-```
-### queue.usage() (Share of usage of limits)
-```js
-	console.log(queue.usage() * 100 + '%');
-```
-
-### queue.remains() (Remains time (ms) till query is end)
-```js
-	console.log(queue.remains()); //remains waiiting time in queue;
-```
-
-### queue.tillEnd() return promise. It will be resolved when query ends
-```js
-	await queue.tillEnd();
-```
-
-## promise
-```js
-	const promise = queue.push();
-```
-
-### promise.remains() (Remains time (ms) till promise is called)
-```js
-	console.log(promise.remains()); //remains waiting time in queue for this promise
-```
-
-### promise.indexOf() count items before promise
-```js
-	console.log(promise.indexOf()); //count items before promise
-```
-
-### promise.resolve(res)
-```js
-	promise.resolve('hello');
-```
-
-### promise.reject(err)
-```js
-	promise.reject(new Error('reject'));
-```
-
-### promise.abort(errMsg)
-Promise throws AbortError
-```js
-	promise.abort();
-```
-
-
-## priority
-```js
-	const queue = new Queue({ 
-		delay           : 30, 
-		defaultPriority : 50, 		
-	}); //OR new Queue(30, 50)
-
-	queue.push(101).then(()=>console.log(101));
-	queue.push(10).then(()=>console.log(10));
-	queue.push(100).then(()=>console.log(100));
-
-	//101, 100, 10
+new new ExtendedPromise({
+	timeout: 100,
+	onFinish: function(promise, result, error){
+		if(error instanceof TimeoutError){
+			promise.result = true;
+			promise.error  = undefined;
+		} 
+	}
+});
 ```
