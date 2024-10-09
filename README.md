@@ -11,22 +11,27 @@ Extended Promise with resolve(), reject(), abort() methods, timeout, and much mo
 * onFinish Callback
 * sleep(ms), applyTimeout(promise, ms)
 
-## Instal
+## Install
 ```
 npm i hkey-extended-promise
 ```
+then
 
 ```js
-	const ExtendedPromise = require('hkey-extended-promise'); 
+const ExtendedPromise = require('hkey-extended-promise'); 
 ```
 OR
 ```js
-	const {ExtendedPromise} = require('hkey-extended-promise'); 
+const {ExtendedPromise} = require('hkey-extended-promise'); 
 ```
 
 OR
 ```js
-	const { ExtendedPromise, sleep, applyTimeout, isAbortError, TimeoutError } = require('hkey-extended-promise'); 
+const { 
+	ExtendedPromise, 
+	sleep, applyTimeout, 
+	isAbortError, TimeoutError,
+} = require('hkey-extended-promise'); 
 ```
 
 ## Usage
